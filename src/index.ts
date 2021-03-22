@@ -170,7 +170,9 @@ export function runIO<A>(e: IO<A>): Promise<A> {
 }
 
 export function testIO<A>(io: IO<A>, mocks: any[], expectedResult: A): void {
-  const [value] = io.test(mocks, 0);
+  const [value, idx] = io.test(mocks, 0);
+  if (idx < mocks.length)
+    throw new Error(`Only ${idx} mocks used, but ${mocks.length} provided`);
   if ("value" in value && !deepEqual(value.value, expectedResult))
     throw new Error(
       `Value invalid, expected ${expectedResult} but saw ${value.value}`
