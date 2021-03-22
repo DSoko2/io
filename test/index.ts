@@ -213,5 +213,11 @@ describe("IO", () => {
         .chain((n) => wrapped2(n + 2));
       testIO(comp2, [[wrapped1(4), 4], [wrapped2(18), 18 * 2 + 4]], 18 * 2 + 4);
     });
+    it("throws on missing mock", () => {
+      const comp = wrapped1(2).chain((_n) => wrapped2(3));
+      assert.throws(() => {
+        testIO(comp, [[wrapped1(2), 2]], 8);
+      }, "Only 1 mocks provided, at least 2 required");
+    });
   });
 });
