@@ -12,3 +12,5 @@ benchmark/hareactive-old
 coverage/
 src/**/*.js
 test/**/*.js
+.DS_Store
+.idea/
