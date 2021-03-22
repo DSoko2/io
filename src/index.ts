@@ -82,11 +82,14 @@ class CallPromiseIO<A, P extends any[]> extends IO<A> {
     return this.f(...this.args);
   }
   test(mocks: [IO<any>, any][], idx: number): TestResult<A> {
-    if (!deepEqual(this, mocks[idx][0])) {
+    if (idx >= mocks.length)
+      throw new Error(
+        `Only ${mocks.length} mocks provided, at least ${idx + 1} required`
+      );
+    if (!deepEqual(this, mocks[idx][0]))
       throw new Error(
         `Value invalid, expected ${mocks[idx][0]} but saw ${this}`
       );
-    }
     return [{ value: mocks[idx][1] }, idx + 1];
   }
 }
@@ -167,12 +170,12 @@ export function runIO<A>(e: IO<A>): Promise<A> {
 }
 
 export function testIO<A>(io: IO<A>, mocks: any[], expectedResult: A): void {
-  const [value] = io.test(mocks, 0);
-  if ("value" in value) {
-    if (!deepEqual(value.value, expectedResult)) {
-      throw new Error(
-        `Value invalid, expected ${expectedResult} but saw ${value.value}`
-      );
-    }
-  }
+  const [value, idx] = io.test(mocks, 0);
+  if (idx < mocks.length)
+    throw new Error(`Only ${idx} mocks used, but ${mocks.length} provided`);
+  if ("error" in value) throw new Error(value.error);
+  else if (!deepEqual(value.value, expectedResult))
+    throw new Error(
+      `Value invalid, expected ${expectedResult} but saw ${value.value}`
+    );
 }
