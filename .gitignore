@@ -6,7 +6,6 @@ node_modules/
 typings
 .tern-port
 .#*
-dist/
 benchmark/hareactive-old
 .nyc_output/
 coverage/
