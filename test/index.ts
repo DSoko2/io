@@ -225,5 +225,13 @@ describe("IO", () => {
         testIO(comp, [[wrapped1(2), 2], [wrapped2(3), 8], [wrapped2(3), 8]], 8);
       }, "Only 2 mocks used, but 3 provided");
     });
+    it("throws on error", () => {
+      const comp = wrapped1(2)
+        .chain((_n) => throwE("test error"))
+        .chain((_n) => wrapped2(3));
+      assert.throws(() => {
+        testIO(comp, [[wrapped1(2), 2]], 8);
+      }, "test error");
+    });
   });
 });
